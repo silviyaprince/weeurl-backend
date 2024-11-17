@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 import jsonwebtoken from "jsonwebtoken";
 const userSchema=new mongoose.Schema({
-    username:{
+    firstname:{
+        type:String,
+        required:true,
+        maxlength:32,
+        trim:true,
+    },
+    lastname:{
         type:String,
         required:true,
         maxlength:32,

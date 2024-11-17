@@ -5,7 +5,7 @@ import { getUserByEmail } from "../controllers/user.js";
 import nodemailer from "nodemailer";
 const router = express.Router();
 
-router.post("/signup", async (req, res) => {
+router.post("/signupregistration", async (req, res) => {
   try {
     let user = await getUserByEmail(req.body.email);
     if (user) {
@@ -14,7 +14,8 @@ router.post("/signup", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     user = await new User({
-      username: req.body.username,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
       email: req.body.email,
       password: hashedPassword,
     }).save();
@@ -65,7 +66,7 @@ router.post("/resetpassword", async (req, res) => {
       pass: "83Gs kRML 0EPZ",
     },
   });
-  const resetLink = `https://zingy-dango-eaccb4.netlify.app/user/resetpassword/${token}`;
+  const resetLink = `http://localhost:3000/user/resetpassword/${token}`;
   const message = {
     from: "silviya.prince16@zohomail.in",
     to: user.email,
