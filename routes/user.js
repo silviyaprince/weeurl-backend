@@ -125,4 +125,7 @@ router.post("/resetpassword/update", async (req, res) => {
   res.status(200).json({ message: "Password has been reset successfully!" });
 });
 
+
+
+
 export const userRouter = router;

@@ -2,12 +2,16 @@ import jwt from "jsonwebtoken";
 import { getUserById } from "./user.js";
 
 const isAuthenticated=async(req,res,next)=>{
+
     let token;
     if(req.headers){
         try{
             token=await req.headers["x-auth-token"]
+            console.log(token)
+            
             const decode=jwt.verify(token,process.env.SECRET_KEY)
             req.user=await getUserById(decode.id)
+
             next()
 
         }catch(err){

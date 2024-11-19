@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+const { ObjectId } = mongoose.Types;
 const urlSchema=new mongoose.Schema({
     longUrl:{
         type:String,
@@ -11,12 +11,20 @@ const urlSchema=new mongoose.Schema({
         unique:true,
        
     },
+    date:{
+        type:String,
+        required:true,
+    },
    clickCount:{
         type:Number,
         default:0
         
     },
-  
+    user:{
+        type:ObjectId,
+        ref:"user",
+        required:true,
+    }
 },
 
 {
