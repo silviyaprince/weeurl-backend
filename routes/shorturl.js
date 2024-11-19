@@ -11,7 +11,7 @@ router.post("/create",isAuthenticated, async (req, res) => {
         // if (!userId || !longUrl) {
         //   return res.status(400).json({ error: "Missing required fields: userId or longUrl" });
         // }
-        const postedDate=new Date().toJSON().slice(0,10)
+        const postedDate=new Date()
         const shortUrl = new Url({
           longUrl, 
           shortUrl: generateUrl(),
@@ -89,6 +89,8 @@ res.status(200).json({data:Urls})
         return shortUrl; // Ensure this always returns a string
     };
 
-    router.get('/count', getUrlsCount); 
 
 export const urlRouter = router;
+
+
+//.toJSON().slice(0,10)
