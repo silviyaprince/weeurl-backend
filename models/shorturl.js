@@ -12,7 +12,7 @@ const urlSchema=new mongoose.Schema({
        
     },
     date:{
-        type:Date,
+        type:String,
         required:true,
     },
    clickCount:{

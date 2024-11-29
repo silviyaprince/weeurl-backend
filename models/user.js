@@ -31,7 +31,9 @@ const userSchema=new mongoose.Schema({
     resetPasswordExpires:{
         type:Date,
     },
-
+    isActive: { type: Boolean, default: false }, // To track account activation
+    activationToken: String, // For activation link
+    activationTokenExpires: Date,
 },
 
 {

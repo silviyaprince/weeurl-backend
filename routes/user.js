@@ -3,6 +3,7 @@ import { generateToken, User } from "../models/user.js";
 import bcrypt from "bcrypt";
 import { getUserByEmail } from "../controllers/user.js";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 const router = express.Router();
 
 router.post("/signupregistration", async (req, res) => {
@@ -13,14 +14,50 @@ router.post("/signupregistration", async (req, res) => {
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const activationToken = crypto.randomBytes(32).toString("hex");
+
     user = await new User({
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
       password: hashedPassword,
+      isActive: false,
+      activationToken,
+      activationTokenExpires: Date.now() + 3600000,
     }).save();
-    const token = generateToken(user._id);
-    res.status(201).json({ message: "successfully created", token });
+    const activationLink = `http://localhost:8030/user/activate/${activationToken}`;
+
+    const sendActivationEmail = (email, link) => {
+      const transporter = nodemailer.createTransport({
+        host: "smtp.zoho.in",
+        port: 587,              // Standard SMTP port
+  secure: false,  
+        auth: {
+          user: "silviya.prince16@zohomail.in",
+          pass: "83Gs kRML 0EPZ",
+        },
+      });
+    
+      const mailOptions = {
+        from: "silviya.prince16@zohomail.in",
+        to: email,
+        subject: "Activate your account",
+        html: `<p>Click <a href="${link}">here</a> to activate your account.</p>`,
+      };
+    
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error("Error sending email:", err);
+        } else {
+          console.log("Email sent:", info.response);
+        }
+      });
+    };
+
+  sendActivationEmail(req.body.email, activationLink);
+
+    // const token = generateToken(user._id);
+    res.status(201).json({ message: "Signup successful! Please check your email to activate your account." });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "server error" });
@@ -33,6 +70,12 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "invalid credentials" });
     }
+
+    if (!user.isActive) {
+      return res.status(403).json({ message: "Account is not activated. Please activate your account." });
+    }
+  
+
     const validatePassword = await bcrypt.compare(
       req.body.password,
       user.password
@@ -125,6 +168,25 @@ router.post("/resetpassword/update", async (req, res) => {
   res.status(200).json({ message: "Password has been reset successfully!" });
 });
 
+router.get("/activate/:token", async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({ 
+    activationToken: token, 
+    activationTokenExpires: { $gt: Date.now() } 
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid or expired activation link." });
+  }
+
+  user.isActive = true;
+  user.activationToken = undefined;
+  user.activationTokenExpires = undefined;
+
+  await user.save();
+
+  res.status(200).json({ message: "Account activated successfully. You can now log in." });
+});
 
 
 
