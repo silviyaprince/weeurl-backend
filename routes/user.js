@@ -34,7 +34,7 @@ router.post("/signupregistration", async (req, res) => {
   secure: false,  
         auth: {
           user: "silviya.prince16@zohomail.in",
-          pass: "83Gs kRML 0EPZ",
+          pass: process.env.PASS_KEY,
         },
       });
     
@@ -106,7 +106,7 @@ router.post("/resetpassword", async (req, res) => {
     secure: true,
     auth: {
       user: "silviya.prince16@zohomail.in",
-      pass: "83Gs kRML 0EPZ",
+      pass: process.env.PASS_KEY,
     },
   });
   const resetLink = `http://localhost:3000/user/resetpassword/${token}`;
