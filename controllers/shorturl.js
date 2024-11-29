@@ -79,7 +79,8 @@ export const getUrlsCount = async () => {
 
     console.log("URLs created per day:", dailyCount);
     console.log("Average URLs per day:", dailyAverage[0]?.average || 0);
-
+    const averageURLsPerDay = dailyAverage[0]?.average || 0;
+    const roundedAverage = averageURLsPerDay.toFixed(1)
     // Calculate monthly counts and their average
     const monthlyCount = await Url.aggregate([
       {
@@ -123,6 +124,7 @@ export const getUrlsCount = async () => {
       dailyCount,
       dailyAverage: dailyAverage[0]?.average || 0,
       monthlyCount,
+      roundedAverage,
       monthlyAverage: monthlyAverage[0]?.average || 0,
     };
   } catch (error) {
